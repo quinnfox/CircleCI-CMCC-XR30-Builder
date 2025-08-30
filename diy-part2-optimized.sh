@@ -88,6 +88,58 @@ function config_device_keep_only(){
 }
 
 # ============================================
+# Configuration Correction Functions
+# ============================================
+
+function fix_target_platform_config() {
+    echo "🔧 Checking and fixing target platform configuration..."
+    
+    # Check if we're using the old mt7981 target platform
+    if grep -q "CONFIG_TARGET_mediatek_mt7981=y" .config; then
+        echo "⚠️  Detected old mt7981 target platform, fixing to filogic..."
+        
+        # Update target platform from mt7981 to filogic
+        config_del "CONFIG_TARGET_mediatek_mt7981"
+        config_add "CONFIG_TARGET_mediatek_filogic"
+        
+        # Update all device configurations from mt7981 to filogic
+        sed -i 's/mediatek_mt7981/mediatek_filogic/g' .config
+        
+        echo "✅ Target platform fixed: mt7981 → filogic"
+        
+        # Verify CMCC XR30 devices are properly enabled
+        if grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30=y" .config; then
+            echo "✅ CMCC XR30 (NAND) device is enabled"
+        else
+            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30"
+            echo "✅ Enabled CMCC XR30 (NAND) device"
+        fi
+        
+        if grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc=y" .config; then
+            echo "✅ CMCC XR30 (eMMC) device is enabled"
+        else
+            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc"
+            echo "✅ Enabled CMCC XR30 (eMMC) device"
+        fi
+    else
+        echo "✅ Target platform configuration is already correct"
+        
+        # Still ensure CMCC XR30 devices are enabled
+        if ! grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30=y" .config; then
+            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30"
+            echo "✅ Enabled CMCC XR30 (NAND) device"
+        fi
+        
+        if ! grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc=y" .config; then
+            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc"
+            echo "✅ Enabled CMCC XR30 (eMMC) device"
+        fi
+    fi
+    
+    echo "🎯 Configuration check completed"
+}
+
+# ============================================
 # Optimization Functions
 # ============================================
 
@@ -376,6 +428,9 @@ config_package_add "netcat"           # Network utility
 
 echo "🚀 Starting optimization process..."
 
+# First, fix target platform configuration if needed
+fix_target_platform_config
+
 # Apply optimizations based on level
 apply_optimizations_by_level
 
@@ -388,3 +443,24 @@ apply_compiler_optimizations
 setup_custom_lan_ip
 
 echo "🎉 All optimizations and configurations completed successfully"
+
+# ============================================
+# Configuration Verification
+# ============================================
+
+echo "📋 验证构建配置..."
+
+# Show all enabled devices
+echo "📋 启用的设备列表："
+grep "CONFIG_TARGET_DEVICE.*=y" .config | sed 's/CONFIG_TARGET_DEVICE_/  - /' | sed 's/=y//'
+
+# Show enabled optimizations
+echo "📋 启用的优化功能："
+echo "  - LTO: ${ENABLE_LTO:-true}"
+echo "  - MOLD: ${ENABLE_MOLD:-true}"
+echo "  - BPF: ${ENABLE_BPF:-true}"
+echo "  - KERNEL_CLANG_LTO: ${KERNEL_CLANG_LTO:-true}"
+echo "  - USE_GCC14: ${USE_GCC14:-true}"
+echo "  - ADVANCED_OPTIMIZATIONS: ${ENABLE_ADVANCED_OPTIMIZATIONS:-true}"
+
+echo "🎯 配置验证完成"
