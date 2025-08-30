@@ -90,6 +90,14 @@ function config_device_keep_only(){
 
 config_device_list
 
+# Fix target platform configuration (mt7981 -> filogic)
+if grep -q "CONFIG_TARGET_mediatek_mt7981=y" .config; then
+    echo "🔧 Fixing target platform: mt7981 → filogic"
+    sed -i 's/CONFIG_TARGET_mediatek_mt7981=y/CONFIG_TARGET_mediatek_filogic=y/' .config
+    sed -i 's/mediatek_mt7981/mediatek_filogic/g' .config
+    echo "✅ Target platform fixed"
+fi
+
 config_device_keep_only "cmcc_xr30"
 
 config_device_del "cmcc_xr30-emmc"
@@ -211,3 +219,11 @@ config_package_add netcat
 # sed -i "s/^PKG_HASH:=.*/PKG_HASH:=${FRP_PKG_HASH}/" "$FRP_MAKEFILE_PATH"
 
 # echo "已更新 Makefile 中的 PKG_VERSION 和 PKG_HASH"
+
+# Change default LAN IP to 192.168.3.1
+echo "🌐 Setting LAN IP to 192.168.3.1"
+find . -name "config_generate" -type f | while read -r config_file; do
+    echo "Updating LAN IP in: $config_file"
+    sed -i "s/192.168.6.1/192.168.3.1/g" "$config_file"
+done
+echo "✅ LAN IP updated to 192.168.3.1"
