@@ -12,9 +12,9 @@ on:
 
 env:
     TZ: Asia/Shanghai
-    REPO_URL: https://github.com/hanwckf/immortalwrt-mt798x
-    REPO_BRANCH: openwrt-21.02
-    OPENWRT_NAME: hanwckf
+    REPO_URL: https://github.com/gitiy1/immortalwrt-mt798x-6.6
+    REPO_BRANCH: openwrt-24.10-6.6
+    OPENWRT_NAME: padavanonly
     UPLOAD_TAG_NAME: cmcc_xr30
     FEEDS_CONF: feeds.conf.default
     # CONFIG_FILE: .config
@@ -59,6 +59,7 @@ jobs:
                 DEBIAN_FRONTEND: noninteractive
               run: |
                 sudo -E apt-get -qq update
+                sudo apt-get install golang-go -y
                 sudo bash -c 'bash <(curl -s https://build-scripts.immortalwrt.org/init_build_environment.sh)'
                 sudo -E apt-get -qq autoremove --purge
                 sudo -E apt-get -qq clean
@@ -81,7 +82,7 @@ jobs:
               id: feeds
               if: steps.clone.outcome == 'success' && !cancelled()
               run: |
-                [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
+                # [ -e $FEEDS_CONF ] && mv $FEEDS_CONF openwrt/feeds.conf.default
                 chmod +x $DIY_P1_SH
                 cd openwrt
                 $GITHUB_WORKSPACE/$DIY_P1_SH
@@ -100,7 +101,7 @@ jobs:
               id: config
               if: steps.feeds-update.outcome == 'success' && !cancelled()
               run: |
-                    cp -f openwrt/defconfig/mt7981-ax3000.config openwrt/config
+                    cp -f openwrt/defconfig/mt7981-ax3000.config openwrt/.config
                     chmod +x $DIY_P2_SH
                     cd openwrt
                     $GITHUB_WORKSPACE/$DIY_P2_SH
@@ -158,8 +159,8 @@ jobs:
                 echo "status=success" >> $GITHUB_OUTPUT
 
             - name: Upload firmware to Artifacts
-              if: steps.organize.outcome == 'success' && !cancelled()
+              # if: steps.organize.outcome == 'success' && !cancelled()
               uses: actions/upload-artifact@main
               with:
                 name: ${{ env.COMPILE_DATE }}-${{ env.OPENWRT_NAME }}-${{ env.UPLOAD_TAG_NAME }}${{ env.WIFI_INTERFACE }}
-                path: ${{ env.FIRMWARE }}
+                path: /workdir/openwrt/bin/targets
