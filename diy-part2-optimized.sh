@@ -136,6 +136,8 @@ function fix_target_platform_config() {
         fi
     fi
     
+    echo "⌚ Device list after replaced..." 
+    config_device_list
     echo "🎯 Configuration check completed"
 }
 
@@ -402,9 +404,11 @@ function setup_custom_lan_ip() {
 # ============================================
 
 # Device configuration
+echo "⌚ Device list before fixed..." 
 config_device_list
 config_device_keep_only "cmcc_xr30"
 config_device_del "cmcc_xr30-emmc"
+echo "⌚ Device list after fixed..." 
 
 # Theme modification
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
