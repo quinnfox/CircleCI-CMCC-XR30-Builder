@@ -225,6 +225,52 @@ function config_package_del() {
     echo "# CONFIG_PACKAGE_${pkg} is not set" >> .config
     echo "✗ Removed package: ${pkg}"
 }
+
+# Custom LAN IP configuration
+function setup_custom_lan_ip() {
+    local custom_ip="${CUSTOM_LAN_IP:-192.168.3.1}"
+    
+    echo "Setting up custom LAN IP: $custom_ip"
+    
+    # Replace ImmortalWrt default IP (192.168.6.1) if different from user input
+    if [[ "$custom_ip" != "192.168.6.1" ]]; then
+        echo "Replacing ImmortalWrt default IP (192.168.6.1) with $custom_ip"
+        
+        # Find and update config_generate files
+        find . -name "config_generate" -type f | while read -r config_file; do
+            echo "Updating ImmortalWrt IP in: $config_file"
+            sed -i "s/192.168.6.1/$custom_ip/g" "$config_file"
+        done
+        
+        # Update other files that might contain the ImmortalWrt IP
+        find . -name "*.sh" -o -name "*.conf" -o -name "*.cfg" | xargs grep -l "192.168.6.1" 2>/dev/null | while read -r file; do
+            echo "Updating ImmortalWrt IP in: $file"
+            sed -i "s/192.168.6.1/$custom_ip/g" "$file"
+        done
+    else
+        echo "Keeping ImmortalWrt default IP (192.168.6.1) as requested"
+    fi
+    
+    # Replace standard OpenWrt IP (192.168.1.1) if different from user input
+    if [[ "$custom_ip" != "192.168.1.1" ]]; then
+        echo "Replacing standard OpenWrt IP (192.168.1.1) with $custom_ip"
+        
+        find . -name "config_generate" -type f | while read -r config_file; do
+            echo "Updating OpenWrt IP in: $config_file"
+            sed -i "s/192.168.1.1/$custom_ip/g" "$config_file"
+        done
+        
+        # Update other files that might contain IP addresses
+        find . -name "*.sh" -o -name "*.conf" -o -name "*.cfg" | xargs grep -l "192.168.1.1" 2>/dev/null | while read -r file; do
+            echo "Updating OpenWrt IP in: $file"
+            sed -i "s/192.168.1.1/$custom_ip/g" "$file"
+        done
+    else
+        echo "Keeping standard OpenWrt IP (192.168.1.1) as requested"
+    fi
+    
+    echo "LAN IP setup completed for: $custom_ip"
+}
 function apply_build_optimizations() {
     echo "🔧 Applying build optimizations..."
     
@@ -362,7 +408,10 @@ apply_build_optimizations
 apply_mt7981_optimizations  
 apply_compiler_optimizations
 
-echo "🎉 All optimizations completed successfully"
+# Setup custom LAN IP
+setup_custom_lan_ip
+
+echo "🎉 All optimizations and configurations completed successfully"
 # sed -i "s/^PKG_HASH:=.*/PKG_HASH:=${FRP_PKG_HASH}/" "$FRP_MAKEFILE_PATH"
 
 # echo "已更新 Makefile 中的 PKG_VERSION 和 PKG_HASH"
