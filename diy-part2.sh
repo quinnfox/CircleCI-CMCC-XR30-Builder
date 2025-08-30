@@ -88,8 +88,6 @@ function config_device_keep_only(){
     done
 }
 
-config_device_list
-
 # Fix target platform configuration (mt7981 -> filogic)
 if grep -q "CONFIG_TARGET_mediatek_mt7981=y" .config; then
     echo "🔧 Fixing target platform: mt7981 → filogic"
@@ -98,9 +96,15 @@ if grep -q "CONFIG_TARGET_mediatek_mt7981=y" .config; then
     echo "✅ Target platform fixed"
 fi
 
+config_device_list
+
 config_device_keep_only "cmcc_xr30"
 
 config_device_del "cmcc_xr30-emmc"
+
+echo "Replaced List"
+
+config_device_list
 
 # Modify default theme
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
