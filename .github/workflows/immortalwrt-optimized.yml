@@ -9,50 +9,45 @@ on:
                 required: true
                 default: false
                 type: boolean
+            OPTIMIZATION_LEVEL:
+                description: 'Optimization level: basic (LTO+MOLD), full (LTO+MOLD+BPF+CLANG), advanced (all optimizations), custom (manual)'
+                required: false
+                default: 'full'
+                type: choice
+                options:
+                - 'basic'
+                - 'full'
+                - 'advanced'
+                - 'custom'
             ENABLE_LTO:
-                description: 'Enable Link Time Optimization'
+                description: '[Custom Mode] Enable Link Time Optimization'
                 required: false
                 default: true
                 type: boolean
             ENABLE_MOLD:
-                description: 'Enable MOLD linker (faster compilation)'
+                description: '[Custom Mode] Enable MOLD linker (faster compilation)'
                 required: false
                 default: true
                 type: boolean
             ENABLE_BPF:
-                description: 'Enable extended BPF support'
+                description: '[Custom Mode] Enable extended BPF support'
                 required: false
                 default: true
                 type: boolean
             KERNEL_CLANG_LTO:
-                description: 'Enable Kernel CLANG LTO (kernel only, userspace still uses GCC)'
+                description: '[Custom Mode] Enable Kernel CLANG LTO'
                 required: false
                 default: true
                 type: boolean
             USE_GCC14:
-                description: 'Use GCC 14 for userspace compilation'
+                description: '[Custom Mode] Use GCC 14 for userspace compilation'
                 required: false
                 default: true
                 type: boolean
-            ENABLE_LRNG:
-                description: 'Enable Linux Random Number Generator (LRNG)'
+            ENABLE_ADVANCED_FEATURES:
+                description: '[Custom Mode] Enable advanced features (LRNG+DPDK+Local KMOD)'
                 required: false
                 default: false
-                type: boolean
-            ENABLE_DPDK:
-                description: 'Enable Data Plane Development Kit (DPDK)'
-                required: false
-                default: false
-                type: boolean
-            ENABLE_LOCAL_KMOD:
-                description: 'Enable local kernel module support'
-                required: false
-                default: false
-                type: boolean
-            ENABLE_ADVANCED_OPTIMIZATIONS:
-                description: 'Enable advanced CPU-specific optimizations (CRC+Crypto+ZLIB)'
-                required: false
-                default: true
                 type: boolean
             CUSTOM_LAN_IP:
                 description: 'Custom LAN IP address (default: 192.168.3.1, replaces ImmortalWrt default 192.168.6.1)'
@@ -72,15 +67,14 @@ env:
     DIY_P2_SH: diy-part2.sh
     
     # Optimization flags
+    OPTIMIZATION_LEVEL: ${{ github.event.inputs.OPTIMIZATION_LEVEL || 'full' }}
+    # Individual optimization settings (only used in custom mode)
     ENABLE_LTO: ${{ github.event.inputs.ENABLE_LTO || 'true' }}
     ENABLE_MOLD: ${{ github.event.inputs.ENABLE_MOLD || 'true' }}
     ENABLE_BPF: ${{ github.event.inputs.ENABLE_BPF || 'true' }}
     KERNEL_CLANG_LTO: ${{ github.event.inputs.KERNEL_CLANG_LTO || 'true' }}
     USE_GCC14: ${{ github.event.inputs.USE_GCC14 || 'true' }}
-    ENABLE_LRNG: ${{ github.event.inputs.ENABLE_LRNG || 'false' }}
-    ENABLE_DPDK: ${{ github.event.inputs.ENABLE_DPDK || 'false' }}
-    ENABLE_LOCAL_KMOD: ${{ github.event.inputs.ENABLE_LOCAL_KMOD || 'false' }}
-    ENABLE_ADVANCED_OPTIMIZATIONS: ${{ github.event.inputs.ENABLE_ADVANCED_OPTIMIZATIONS || 'true' }}
+    ENABLE_ADVANCED_FEATURES: ${{ github.event.inputs.ENABLE_ADVANCED_FEATURES || 'false' }}
     CUSTOM_LAN_IP: ${{ github.event.inputs.CUSTOM_LAN_IP || '192.168.3.1' }}
 
 jobs:
