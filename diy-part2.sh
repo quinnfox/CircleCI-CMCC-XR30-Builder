@@ -92,6 +92,8 @@ config_device_list
 
 config_device_keep_only "cmcc_xr30"
 
+config_device_del "cmcc_xr30-emmc"
+
 # Modify default theme
 sed -i 's/luci-theme-bootstrap/luci-theme-argon/g' feeds/luci/collections/luci/Makefile
 
