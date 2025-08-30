@@ -251,7 +251,7 @@ function apply_build_optimizations() {
     fi
     
     # Enable build acceleration tools
-    config_add "CCACHE"
+    # config_add "CCACHE"
     
     echo "✅ Build optimizations applied"
 }
