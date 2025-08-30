@@ -505,9 +505,6 @@ function configure_network_packages() {
     # USB network adapters
     local usb_network_packages=(
         "kmod-usb-net-ipheth"              # iPhone tethering
-        "kmod-usb-net-aqc111"              # AQC111 USB-to-Ethernet
-        "kmod-usb-net-rtl8152-vendor"      # Realtek USB-to-Ethernet
-        "kmod-usb-net-sierrawireless"      # Sierra Wireless modems
     )
     
     for package in "${usb_network_packages[@]}"; do
@@ -559,7 +556,7 @@ function configure_shell_packages() {
     echo "🐚 Configuring shell and terminal packages..."
     
     # Advanced shell environment
-    config_package_add "fish"                   # Fish shell
+    config_package_add "zsh"                   # Fish shell
     config_package_add "vim-full"               # Full-featured Vim
     config_package_add "byobu"                  # Terminal multiplexer wrapper
     config_package_add "tmux"                   # Terminal multiplexer
