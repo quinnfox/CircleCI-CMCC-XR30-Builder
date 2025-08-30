@@ -108,32 +108,14 @@ function fix_target_platform_config() {
         echo "✅ Target platform fixed: mt7981 → filogic"
         
         # Verify CMCC XR30 devices are properly enabled
-        if grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30=y" .config; then
-            echo "✅ CMCC XR30 (NAND) device is enabled"
+        if grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-stock=y" .config; then
+            echo "✅ CMCC XR30 (NAND Stock) device is enabled"
         else
-            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30"
-            echo "✅ Enabled CMCC XR30 (NAND) device"
-        fi
-        
-        if grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc=y" .config; then
-            echo "✅ CMCC XR30 (eMMC) device is enabled"
-        else
-            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc"
-            echo "✅ Enabled CMCC XR30 (eMMC) device"
+            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-stock"
+            echo "✅ Enabled CMCC XR30 (NAND Stock) device"
         fi
     else
         echo "✅ Target platform configuration is already correct"
-        
-        # Still ensure CMCC XR30 devices are enabled
-        if ! grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30=y" .config; then
-            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30"
-            echo "✅ Enabled CMCC XR30 (NAND) device"
-        fi
-        
-        if ! grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc=y" .config; then
-            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-emmc"
-            echo "✅ Enabled CMCC XR30 (eMMC) device"
-        fi
     fi
     
     echo "⌚ Device list after replaced..." 
