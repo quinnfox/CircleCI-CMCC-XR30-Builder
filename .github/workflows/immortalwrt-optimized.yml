@@ -78,7 +78,7 @@ env:
     CUSTOM_LAN_IP: ${{ github.event.inputs.CUSTOM_LAN_IP || '192.168.3.1' }}
 
 jobs:
-    ImmortalWrt-Builder:
+    ImmortalWrt-Builder-Optimized:
         runs-on: ubuntu-24.04
 
         steps:
