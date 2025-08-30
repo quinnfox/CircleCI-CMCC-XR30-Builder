@@ -135,8 +135,8 @@ config_package_add usbutils
 config_package_add kmod-usb-net
 config_package_add kmod-usb-net-rndis
 config_package_add kmod-usb-net-ipheth
-config_package_add kmod-usb-net-aqc111
-config_package_add kmod-usb-net-rtl8152-vendor
+# config_package_add kmod-usb-net-aqc111
+# config_package_add kmod-usb-net-rtl8152-vendor
 config_package_add kmod-usb-net-sierrawireless
 config_package_add kmod-usb-storage
 config_package_add kmod-usb-ohci
