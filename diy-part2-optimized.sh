@@ -251,7 +251,7 @@ function apply_build_optimizations() {
     fi
     
     # Enable build acceleration tools
-    config_add "CCACHE"
+    # config_add "CCACHE"
     
     echo "✅ Build optimizations applied"
 }
@@ -305,7 +305,7 @@ function apply_compiler_optimizations() {
 CONFIG_HOST_CFLAGS="-O3 -pipe"
 CONFIG_HOST_CXXFLAGS="-O3 -pipe"
 # Global build optimization
-CONFIG_CCACHE=y
+CONFIG_CCACHE=n
 EOF
     
     # Kernel CLANG LTO if requested (only affects kernel compilation)
