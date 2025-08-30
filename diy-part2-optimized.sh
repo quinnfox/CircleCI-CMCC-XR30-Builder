@@ -532,6 +532,7 @@ function configure_system_packages() {
     config_package_add "qrencode"               # QR code generator
     
     # USB support
+    config_package_add "usbutils"
     config_package_add "kmod-usb-net"
     config_package_add "kmod-usb-net-rndis"
     config_package_add "luci-app-usb3disable"   # USB3.0 disable control
