@@ -6,7 +6,71 @@
 # Enhanced with build optimizations
 #
 # This is free software, licensed under the MIT License.
-# See /LICENSE for more information.
+# See /LICENSE for mofunction apply_optimizations_by_level() {
+    local optimization_level="${OPTIMIZATION_LEVEL:-full}"
+    
+    echo "🎯 Applying optimizations for level: $optimization_level"
+    
+    case "$optimizfunction apply_compiler_optimizations() {n_level" in
+        "basic")
+            echo "📦 Basic optimizations: LTO + MOLD"
+            export ENABLE_LTO="true"
+            export ENABLE_MOLD="true"
+            export ENABLE_BPF="false"
+            export KERNEL_CLANG_LTO="false"
+            export USE_GCC14="false"
+            export ENABLE_LRNG="false"
+            export ENABLE_DPDK="false"
+            export ENABLE_LOCAL_KMOD="false"
+            export ENABLE_ADVANCED_OPTIMIZATIONS="false"
+            ;;
+        "full")
+            echo "🚀 Full optimizations: LTO + MOLD + BPF + CLANG LTO + GCC14"
+            export ENABLE_LTO="true"
+            export ENABLE_MOLD="true"
+            export ENABLE_BPF="true"
+            export KERNEL_CLANG_LTO="true"
+            export USE_GCC14="true"
+            export ENABLE_LRNG="false"
+            export ENABLE_DPDK="false"
+            export ENABLE_LOCAL_KMOD="false"
+            export ENABLE_ADVANCED_OPTIMIZATIONS="true"
+            ;;
+        "advanced")
+            echo "⚡ Advanced optimizations: All features enabled"
+            export ENABLE_LTO="true"
+            export ENABLE_MOLD="true"
+            export ENABLE_BPF="true"
+            export KERNEL_CLANG_LTO="true"
+            export USE_GCC14="true"
+            export ENABLE_LRNG="true"
+            export ENABLE_DPDK="true"
+            export ENABLE_LOCAL_KMOD="true"
+            export ENABLE_ADVANCED_OPTIMIZATIONS="true"
+            ;;
+        "custom")
+            echo "🔧 Custom optimizations: Using individual settings"
+            # Keep current environment variables as set by GitHub Actions
+            if [[ "${ENABLE_ADVANCED_FEATURES}" == "true" ]]; then
+                export ENABLE_LRNG="true"
+                export ENABLE_DPDK="true"
+                export ENABLE_LOCAL_KMOD="true"
+            else
+                export ENABLE_LRNG="false"
+                export ENABLE_DPDK="false"
+                export ENABLE_LOCAL_KMOD="false"
+            fi
+            ;;
+        *)
+            echo "⚠️  Unknown optimization level: $optimization_level, using full"
+            export OPTIMIZATION_LEVEL="full"
+            apply_optimizations_by_level
+            return
+            ;;
+    esac
+    
+    echo "✅ Optimization level configuration completed"
+} information.
 #
 
 # Build optimization notice
@@ -333,7 +397,8 @@ function apply_build_optimizations() {
     echo "✅ Build optimizations applied"
 }
 
-function apply_mt7981_optimizations() {
+function apply_build_optimizations() {
+    echo "🔧 Applying individual build optimizations..."
     echo "🎯 Applying MT7981 specific optimizations"
     
     # Ensure XR30 devices are properly configured
@@ -371,7 +436,7 @@ function apply_mt7981_optimizations() {
     echo "✅ MT7981 optimizations applied"
 }
 
-function apply_compiler_optimizations() {
+function apply_mt7981_optimizations() {
     echo "🔧 Applying compiler optimizations"
     
     # Enable toolchain options
@@ -408,10 +473,14 @@ apply_build_optimizations
 apply_mt7981_optimizations  
 apply_compiler_optimizations
 
+# Apply optimizations based on level
+apply_optimizations_by_level
+apply_build_optimizations
+apply_mt7981_optimizations  
+apply_compiler_optimizations
+
 # Setup custom LAN IP
 setup_custom_lan_ip
-
 echo "🎉 All optimizations and configurations completed successfully"
-# sed -i "s/^PKG_HASH:=.*/PKG_HASH:=${FRP_PKG_HASH}/" "$FRP_MAKEFILE_PATH"
 
 # echo "已更新 Makefile 中的 PKG_VERSION 和 PKG_HASH"
