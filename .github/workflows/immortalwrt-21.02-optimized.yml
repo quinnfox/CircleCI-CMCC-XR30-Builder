@@ -1,4 +1,4 @@
-name: ImmortalWrt Builder (Optimized)
+name: ImmortalWrt 21.02 Builder (Optimized)
 
 on:
     repository_dispatch:
@@ -29,11 +29,11 @@ on:
                 required: false
                 default: true
                 type: boolean
-            ENABLE_BPF:
-                description: '[Custom Mode] Enable extended BPF support'
-                required: false
-                default: true
-                type: boolean
+            # ENABLE_BPF:
+            #     description: '[Custom Mode] Enable extended BPF support'
+            #     required: false
+            #     default: true
+            #     type: boolean
             KERNEL_CLANG_LTO:
                 description: '[Custom Mode] Enable Kernel CLANG LTO'
                 required: false
@@ -50,16 +50,16 @@ on:
                 default: false
                 type: boolean
             CUSTOM_LAN_IP:
-                description: 'Custom LAN IP address (default: 192.168.3.1, replaces ImmortalWrt default 192.168.6.1)'
+                description: 'Custom LAN IP address (default: 192.168.3.1, replaces ImmortalWrt default 192.168.1.1)'
                 required: false
                 default: '192.168.3.1'
                 type: string
 
 env:
     TZ: Asia/Shanghai
-    REPO_URL: https://github.com/gitiy1/immortalwrt-mt798x-6.6
-    REPO_BRANCH: openwrt-24.10-6.6
-    OPENWRT_NAME: padavanonly
+    REPO_URL: https://github.com/hanwckf/immortalwrt-mt798x
+    REPO_BRANCH: openwrt-21.02
+    OPENWRT_NAME: hanwckf
     UPLOAD_TAG_NAME: cmcc_xr30
     FEEDS_CONF: feeds.conf.default
     # CONFIG_FILE: .config
@@ -71,7 +71,7 @@ env:
     # Individual optimization settings (only used in custom mode)
     ENABLE_LTO: ${{ github.event.inputs.ENABLE_LTO || 'true' }}
     ENABLE_MOLD: ${{ github.event.inputs.ENABLE_MOLD || 'true' }}
-    ENABLE_BPF: ${{ github.event.inputs.ENABLE_BPF || 'true' }}
+    # ENABLE_BPF: ${{ github.event.inputs.ENABLE_BPF || 'true' }}
     KERNEL_CLANG_LTO: ${{ github.event.inputs.KERNEL_CLANG_LTO || 'true' }}
     USE_GCC14: ${{ github.event.inputs.USE_GCC14 || 'true' }}
     ENABLE_ADVANCED_FEATURES: ${{ github.event.inputs.ENABLE_ADVANCED_FEATURES || 'false' }}
@@ -79,7 +79,7 @@ env:
 
 jobs:
     ImmortalWrt-Builder-Optimized:
-        runs-on: ubuntu-24.04
+        runs-on: ubuntu-latest
 
         steps:
             - name: Checkout
@@ -136,12 +136,12 @@ jobs:
                 echo "🚀 Build Optimization Settings:"
                 echo "  ENABLE_LTO: ${{ env.ENABLE_LTO }}"
                 echo "  ENABLE_MOLD: ${{ env.ENABLE_MOLD }}"
-                echo "  ENABLE_BPF: ${{ env.ENABLE_BPF }}"
+                # echo "  ENABLE_BPF: ${{ env.ENABLE_BPF }}"
                 echo "  KERNEL_CLANG_LTO: ${{ env.KERNEL_CLANG_LTO }}"
                 echo "  USE_GCC14: ${{ env.USE_GCC14 }}"
-                echo "  ENABLE_LRNG: ${{ env.ENABLE_LRNG }}"
-                echo "  ENABLE_DPDK: ${{ env.ENABLE_DPDK }}"
-                echo "  ENABLE_LOCAL_KMOD: ${{ env.ENABLE_LOCAL_KMOD }}"
+                # echo "  ENABLE_LRNG: ${{ env.ENABLE_LRNG }}"
+                # echo "  ENABLE_DPDK: ${{ env.ENABLE_DPDK }}"
+                # echo "  ENABLE_LOCAL_KMOD: ${{ env.ENABLE_LOCAL_KMOD }}"
                 
                 echo "status=success" >> $GITHUB_OUTPUT
 
@@ -219,12 +219,12 @@ jobs:
                 echo "Build optimizations enabled:"
                 echo "  - LTO: ${{ env.ENABLE_LTO }}"
                 echo "  - MOLD: ${{ env.ENABLE_MOLD }}"
-                echo "  - BPF: ${{ env.ENABLE_BPF }}"
+                # echo "  - BPF: ${{ env.ENABLE_BPF }}"
                 echo "  - Kernel CLANG LTO: ${{ env.KERNEL_CLANG_LTO }}"
                 echo "  - GCC14: ${{ env.USE_GCC14 }}"
-                echo "  - LRNG: ${{ env.ENABLE_LRNG }}"
-                echo "  - DPDK: ${{ env.ENABLE_DPDK }}"
-                echo "  - Local KMOD: ${{ env.ENABLE_LOCAL_KMOD }}"
+                # echo "  - LRNG: ${{ env.ENABLE_LRNG }}"
+                # echo "  - DPDK: ${{ env.ENABLE_DPDK }}"
+                # echo "  - Local KMOD: ${{ env.ENABLE_LOCAL_KMOD }}"
                 
                 # Record build start time
                 BUILD_START=$(date +%s)
