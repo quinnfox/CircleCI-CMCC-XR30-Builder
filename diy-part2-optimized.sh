@@ -598,15 +598,15 @@ function configure_custom_applications() {
     # config_package_add "luci-app-frpc"        # FRP client
     # config_package_add "luci-app-mosdns"      # MosDNS
     
-    # Passwall2 configuration (commented out by default)
-    # if [ "${ENABLE_PASSWALL:-false}" = "true" ]; then
-    #     echo "🔐 Enabling Passwall2..."
-    #     config_package_add "luci-app-passwall2"
-    #     config_package_add "iptables-mod-socket"
-    #     config_package_add "luci-app-passwall2_Iptables_Transparent_Proxy"
-    #     config_package_add "luci-app-passwall2_INCLUDE_Hysteria"
-    #     config_package_del "luci-app-passwall2_Nftables_Transparent_Proxy"
-    # fi
+    Passwall2 configuration (commented out by default)
+    echo "🔐 Enabling Passwall2..."
+    config_package_add "luci-app-passwall2"
+    # config_package_add "iptables-mod-socket"
+    # config_package_add "luci-app-passwall2_Iptables_Transparent_Proxy"
+    config_package_add "luci-app-passwall2_INCLUDE_Hysteria"
+    config_package_add "luci-app-passwall2_Nftables_Transparent_Proxy"
+    config_package_add "kmod-nft-socket"
+    config_package_add "kmod-nft-tproxy"
     
     echo "✅ Custom applications configured"
 }
