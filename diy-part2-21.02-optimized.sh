@@ -106,20 +106,20 @@ function fix_target_platform_config() {
         echo "⚠️  Detected old mt7981 target platform, fixing to filogic..."
         
         # Update target platform from mt7981 to filogic
-        config_del "CONFIG_TARGET_mediatek_mt7981"
-        config_add "CONFIG_TARGET_mediatek_filogic"
+        # config_del "CONFIG_TARGET_mediatek_mt7981"
+        # config_add "CONFIG_TARGET_mediatek_filogic"
         
         # Update all device configurations from mt7981 to filogic
-        sed -i 's/mediatek_mt7981/mediatek_filogic/g' .config
+        # sed -i 's/mediatek_mt7981/mediatek_filogic/g' .config
         
-        echo "✅ Target platform fixed: mt7981 → filogic"
+        # echo "✅ Target platform fixed: mt7981 → filogic"
         
         # Verify CMCC XR30 devices are properly enabled
-        if grep -q "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-stock=y" .config; then
-            echo "✅ CMCC XR30 (NAND Stock) device is enabled"
+        if grep -q "CONFIG_TARGET_DEVICE_mediatek_mt7981_DEVICE_cmcc_xr30-stock=y" .config; then
+            echo "✅ CMCC XR30 (NAND) device is enabled"
         else
-            config_add "CONFIG_TARGET_DEVICE_mediatek_filogic_DEVICE_cmcc_xr30-stock"
-            echo "✅ Enabled CMCC XR30 (NAND Stock) device"
+            config_add "CONFIG_TARGET_DEVICE_mediatek_mt7981_DEVICE_cmcc_xr30-stock"
+            echo "✅ Enabled CMCC XR30 (NAND) device"
         fi
     else
         echo "✅ Target platform configuration is already correct"
@@ -623,9 +623,9 @@ function configure_custom_applications() {
 # Device configuration
 echo "⌚ Device list before fixed..." 
 config_device_list
-config_device_keep_only "cmcc_xr30-stock"
+config_device_keep_only "cmcc_xr30"
 
-echo "✅ Configured for XR30-stock (H layout) only"
+echo "✅ Configured for XR30 (H layout) only"
 echo "⌚ Device list after fixed..." 
 
 # Theme modification
