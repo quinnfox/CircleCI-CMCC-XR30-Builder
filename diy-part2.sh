@@ -187,10 +187,12 @@ config_package_add "kmod-xdp-sockets-diag"
 config_package_add "kmod-sched-core"
 config_package_add "kmod-sched-bpf"
 config_package_add "kmod-nft-bridge"
+config_package_add "libbpf"
 config_add KERNEL_BPF
 config_add KERNEL_BPF_SYSCALL
 config_add KERNEL_BPF_JIT
 config_add KERNEL_CGROUPS
+config_add KERNEL_CGROUP_BPF
 config_add KERNEL_KPROBES
 config_add KERNEL_NET_INGRESS
 config_add KERNEL_NET_EGRESS
@@ -200,9 +202,11 @@ config_add KERNEL_NET_CLS_ACT
 config_add KERNEL_BPF_STREAM_PARSER
 config_add KERNEL_DEBUG_INFO
 config_del KERNEL_DEBUG_INFO_REDUCED
-config_add DEBUG_INFO_BTF
+config_add KERNEL_DEBUG_INFO_BTF
+config_add KERNEL_DEBUG_INTO_BTF_MODULES
 config_add KERNEL_KPROBE_EVENTS
 config_add KERNEL_BPF_EVENTS
+config_add KERNEL_NETKIT 
 echo "✅ Daed kernel configuration completed"
 
 # Third-party packages
