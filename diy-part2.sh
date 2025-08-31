@@ -260,3 +260,5 @@ find . -name "config_generate" -type f | while read -r config_file; do
     sed -i "s/192.168.6.1/192.168.3.1/g" "$config_file"
 done
 echo "✅ LAN IP updated to 192.168.3.1"
+
+cat .config
