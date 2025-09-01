@@ -497,7 +497,7 @@ function configure_unwanted_packages() {
     done
     
     # Remove theme packages
-    config_package_del "luci-theme-bootstrap-mod"
+    # config_package_del "luci-theme-bootstrap-mod"
     config_package_add "luci-theme-argon"
     
     # Clean shadowsocks packages from custom directory
