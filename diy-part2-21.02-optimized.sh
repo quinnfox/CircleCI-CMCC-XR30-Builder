@@ -481,6 +481,7 @@ function configure_unwanted_packages() {
     local ssr_packages=(
         "luci-app-ssr-plus_INCLUDE_NONE_V2RAY"
         "luci-app-ssr-plus_INCLUDE_Shadowsocks_NONE_Client"
+        "luci-app-ssr-plus_INCLUDE_Shadowsocks_NONE_Server"
         "luci-app-ssr-plus_INCLUDE_ShadowsocksR_NONE_Server"
         "luci-app-ssr-plus_INCLUDE_ShadowsocksR_Rust_Client"
         "luci-app-ssr-plus_INCLUDE_ShadowsocksR_Rust_Server"
