@@ -57,7 +57,7 @@ on:
 
 env:
     TZ: Asia/Shanghai
-    REPO_URL: https://github.com/gitiy1/immortalwrt-mt798x-6.6
+    REPO_URL: https://github.com/padavanonly/immortalwrt-mt798x-6.6
     REPO_BRANCH: openwrt-24.10-6.6
     OPENWRT_NAME: padavanonly
     UPLOAD_TAG_NAME: cmcc_xr30
