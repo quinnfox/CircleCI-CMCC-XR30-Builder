@@ -485,8 +485,24 @@ function configure_unwanted_packages() {
         "luci-app-ssr-plus_INCLUDE_ShadowsocksR_Rust_Client"
         "luci-app-ssr-plus_INCLUDE_ShadowsocksR_Rust_Server"
     )
-    
+
     for package in "${ssr_packages[@]}"; do
+        config_package_del "$package"
+    done
+    
+    local passwall_ssr_packages=(
+        "luci-app-passwall2_INCLUDE_ShadowsocksR_Libev_Client"
+        "luci-app-passwall2_INCLUDE_Haproxy"
+        "luci-app-passwall2_INCLUDE_Shadowsocks_Libev_Client"
+        "luci-app-passwall2_INCLUDE_Shadowsocks_Rust_Client"
+        "luci-app-passwall2_INCLUDE_Simple_Obfs"
+        "shadowsocks-libev-ss-local"
+        "shadowsocks-libev-ss-redir"
+        "shadowsocksr-libev-ssr-local"
+        "shadowsocksr-libev-ssr-redir"
+    )
+    
+    for package in "${passwall_ssr_packages[@]}"; do
         config_package_del "$package"
     done
     
