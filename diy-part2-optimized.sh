@@ -486,9 +486,9 @@ function setup_third_party_packages() {
     fi
 
     # luci-app-usb3disable
-    if [ ! -d "package/luci-app-usb3disable" ]; then
-        git clone https://github.com/rufengsuixing/luci-app-usb3disable package/luci-app-usb3disable
-    fi
+    # if [ ! -d "package/luci-app-usb3disable" ]; then
+    #     git clone https://github.com/rufengsuixing/luci-app-usb3disable package/luci-app-usb3disable
+    # fi
     
     echo "✅ Third-party packages setup completed"
 }
