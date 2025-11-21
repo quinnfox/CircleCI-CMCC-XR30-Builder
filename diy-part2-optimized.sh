@@ -266,7 +266,14 @@ function apply_build_optimizations() {
     echo "⚡ Enabling CCache..."
     echo "CONFIG_CCACHE=y" >> .config
     echo "CONFIG_CCACHE_DIR=\"/workdir/openwrt/.ccache\"" >> .config
-    
+    mkdir -p /workdir/openwrt/.ccache
+    cat >> /workdir/openwrt/.ccache/ccache.conf << 'EOF'
+compiler_check = content
+compression = true
+compression_level = 5
+max_size = 5G
+EOF
+
     echo "✅ Build optimizations applied"
 }
 
