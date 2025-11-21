@@ -496,10 +496,12 @@ function configure_unwanted_packages() {
         "luci-app-passwall2_INCLUDE_Shadowsocks_Libev_Client"
         "luci-app-passwall2_INCLUDE_Shadowsocks_Rust_Client"
         "luci-app-passwall2_INCLUDE_Simple_Obfs"
+        "luci-app-passwall2_INCLUDE_V2ray_Plugin"
         "shadowsocks-libev-ss-local"
         "shadowsocks-libev-ss-redir"
         "shadowsocksr-libev-ssr-local"
         "shadowsocksr-libev-ssr-redir"
+        "v2ray-plugin"
     )
     
     for package in "${passwall_ssr_packages[@]}"; do
