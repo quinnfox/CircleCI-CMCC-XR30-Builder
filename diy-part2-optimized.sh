@@ -509,6 +509,15 @@ function configure_unwanted_packages() {
     for package in "${passwall_ssr_packages[@]}"; do
         config_package_del "$package"
     done
+
+    local passwall_singbox_packages=(
+        "luci-app-passwall2_INCLUDE_SingBox"
+        "sing-box"
+    )
+    
+    for package in "${passwall_singbox_packages[@]}"; do
+        config_package_del "$package"
+    done
     
     # Remove theme packages
     config_package_del "luci-theme-bootstrap-mod"
