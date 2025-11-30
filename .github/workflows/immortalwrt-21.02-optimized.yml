@@ -61,7 +61,7 @@ env:
     REPO_BRANCH: openwrt-21.02
     OPENWRT_NAME: hanwckf
     UPLOAD_TAG_NAME: cmcc_xr30
-    FEEDS_CONF: feeds.conf.default
+    FEEDS_CONF: feeds.21.02.conf.default
     # CONFIG_FILE: .config
     DIY_P1_SH: diy-part1.sh
     DIY_P2_SH: diy-part2-21.02-optimized.sh
