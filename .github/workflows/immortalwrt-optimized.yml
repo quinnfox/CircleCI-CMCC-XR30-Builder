@@ -280,7 +280,7 @@ jobs:
                 sudo mkdir -p /mnt/openwrt_build
                 
                 # Optimized build process
-                BUILD_DIR=/mnt/openwrt_build make -j${JOBS} 2> >(tee build-error.log) >/dev/null || make -j1 2> >(tee -a build-error.log) >/dev/null || make -j1 V=s 2> >(tee -a build-error.log) >/dev/null
+                make -j${JOBS} 2> >(tee build-error.log) >/dev/null || make -j1 2> >(tee -a build-error.log) >/dev/null || make -j1 V=s 2> >(tee -a build-error.log) >/dev/null
                 
                 # Calculate build time
                 BUILD_END=$(date +%s)
