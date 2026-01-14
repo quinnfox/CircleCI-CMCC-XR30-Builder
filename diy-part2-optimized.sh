@@ -674,8 +674,8 @@ function configure_custom_applications() {
     config_package_add "miniupnpd"
 
     # Docker容器管理
-    config_package_add docker
-    config_package_add luci-app-dockerman
+    #config_package_add docker
+    #config_package_add luci-app-dockerman
     
     ## 配置应用商店
     config_package_add luci-app-store
