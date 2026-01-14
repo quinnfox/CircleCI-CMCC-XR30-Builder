@@ -681,7 +681,7 @@ function configure_custom_applications() {
     config_package_add luci-app-store
     
     # AdGuard Home
-    #config_package_add luci-app-adguardhome
+    config_package_add luci-app-adguardhome
 
     echo "✅ Custom applications configured"
 }
