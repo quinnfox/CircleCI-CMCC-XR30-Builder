@@ -25,5 +25,7 @@ if [ -f ".config" ]; then
         echo 'CONFIG_BUILD_DIR_OVERRIDE="/mnt/openwrt_build"' >> .config
         echo "已添加构建目录/mnt/openwrt_build覆盖选项"
     fi
+else
+    echo "未找到配置文件.config"    
 fi
 
