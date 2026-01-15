@@ -193,10 +193,10 @@ jobs:
                 sudo mkdir -p /mnt/openwrt_build
                 sudo chmod 775 /mnt/openwrt_build
                 # 4. 测试写入权限（关键）
-                touch /mnt/openwrt_build/test.txt
+                sudo touch /mnt/openwrt_build/test.txt
                 if [ $? -eq 0 ]; then
                   echo "路径权限正常"
-                  rm /mnt/openwrt_build/test.txt
+                  sudo rm /mnt/openwrt_build/test.txt
                 else
                   echo "路径无写入权限，检查挂载/权限"
                 fi
