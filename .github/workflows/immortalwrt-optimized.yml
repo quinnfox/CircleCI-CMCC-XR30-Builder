@@ -274,13 +274,20 @@ jobs:
                   echo "查看.config内容："
                   cat .config
 
+            - name: defconfig
+              id: defconfig
+              if: steps.config.outcome == 'success' && !cancelled()
+              run: |
+                cd openwrt
+                make defconfig V=s 
+
+                cat include/config/auto.conf | grep BUILD_DIR     
+
             - name: Download package
               id: package
               if: steps.config.outcome == 'success' && !cancelled()
               run: |
-                cd openwrt
-                make defconfig
-                
+                cd openwrt  
                 # Use optimized parallel download
                 CORES=$(nproc)
                 JOBS=$((CORES + 1))
