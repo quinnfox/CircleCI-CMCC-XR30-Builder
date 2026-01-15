@@ -220,6 +220,37 @@ jobs:
                 else
                     echo "未找到配置文件.config"
                 fi
+
+            - name: docker config
+              id: docker_config
+              if: steps.feeds-update.outcome == 'success' && !cancelled()
+              run: |
+                cd openwrt
+
+                # 定义要追加的配置内容（避免手动输入错误）
+                cat << 'EOF' >> .config
+                # 内核必需项（Docker依赖）
+                CONFIG_KERNEL_CGROUPS=y
+                CONFIG_KERNEL_CGROUP_MEM_RES_CTLR=y
+                CONFIG_KERNEL_CGROUP_PIDS=y
+                CONFIG_KERNEL_NAMESPACES=y
+                CONFIG_KERNEL_OVERLAY_FS=y       # 存储驱动overlay2需要
+                CONFIG_KERNEL_BRIDGE=y
+                CONFIG_KERNEL_VETH=y             # 虚拟网卡，Docker网络需要
+                
+                # Docker核心组件
+                CONFIG_PACKAGE_docker=y
+                CONFIG_PACKAGE_docker-ce=y       # 优先选docker-ce（若无则只保留docker）
+                CONFIG_PACKAGE_containerd=y
+                CONFIG_PACKAGE_runc=y
+                CONFIG_PACKAGE_docker-compose=y  # 可选，按需添加
+                
+                # 依赖工具
+                CONFIG_PACKAGE_bridge-utils=y
+                CONFIG_PACKAGE_iptables=y
+                CONFIG_PACKAGE_ebtables=y
+                CONFIG_PACKAGE_kmod-br-netfilter=y  # 桥接网络过滤
+                EOF
             
             - name: Use luci-app-mtk config
               if: github.event.inputs.APP_MTK == 'true'
@@ -233,8 +264,15 @@ jobs:
             - name: cat config
               if: steps.config.outcome == 'success' && !cancelled()
               run: |
+                  cd openwrt
+                  # 去重：保留每个配置项的最后一次定义（符合OpenWRT配置规则）
+                  awk -F '=' '!a[$1]++' .config > .config.tmp && mv .config.tmp .config
+                
+                  # 移除注释行和空行（可选，让.config更整洁）
+                  sed -i '/^#/d; /^$/d' .config
+                
                   echo "查看.config内容："
-                  cat openwrt/.config
+                  cat .config
 
             - name: Download package
               id: package
