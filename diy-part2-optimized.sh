@@ -681,7 +681,7 @@ function configure_custom_applications() {
 
 
     # Docker容器管理
-    config_package_add docker
+    ##config_package_add docker
     ##config_package_add luci-app-dockerman
 
     # 应用过滤和管理
