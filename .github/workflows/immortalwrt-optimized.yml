@@ -190,6 +190,17 @@ jobs:
               run: |
                 cd openwrt
 
+                sudo mkdir -p /mnt/openwrt_build
+                sudo chmod 775 /mnt/openwrt_build
+                # 4. 测试写入权限（关键）
+                touch /mnt/openwrt_build/test.txt
+                if [ $? -eq 0 ]; then
+                  echo "路径权限正常"
+                  rm /mnt/openwrt_build/test.txt
+                else
+                  echo "路径无写入权限，检查挂载/权限"
+                fi
+                
                 # 安全设置构建目录覆盖选项
                 if [ -f ".config" ]; then
                     # 检查配置是否已存在（包括被注释的情况）
@@ -308,8 +319,6 @@ jobs:
                     fi
                   done
                 ) &
-
-                sudo mkdir -p /mnt/openwrt_build
                 
                 # Optimized build process
                 make -j${JOBS} 2> >(tee build-error.log) >/dev/null || make -j1 2> >(tee -a build-error.log) >/dev/null || make -j1 V=s 2> >(tee -a build-error.log) >/dev/null
