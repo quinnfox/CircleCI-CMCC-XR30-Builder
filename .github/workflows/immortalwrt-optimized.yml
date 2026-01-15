@@ -254,14 +254,12 @@ jobs:
 
             - name: defconfig
               id: defconfig
-              if: steps.config.outcome == 'success' && !cancelled()
               run: |
                 cd openwrt
                 make defconfig V=s   
 
             - name: Download package
               id: package
-              if: steps.config.outcome == 'success' && !cancelled()
               run: |
                 cd openwrt  
                 # Use optimized parallel download
