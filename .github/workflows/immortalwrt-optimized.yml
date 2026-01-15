@@ -4,6 +4,11 @@ on:
     repository_dispatch:
     workflow_dispatch:
         inputs:
+            RELOAD_CONFIG:
+                description: '重新加载配置'
+                required: true
+                default: false
+                type: boolean
             APP_MTK:
                 description: 'Use luci-app-mtk wifi config'
                 required: true
@@ -174,9 +179,15 @@ jobs:
                 ./scripts/feeds install -a
                 echo "status=success" >> $GITHUB_OUTPUT
 
+            - name: cp .config
+              id: cp_config
+              if: steps.feeds.outcome == 'success' && !cancelled()
+              run: |
+                    cp -f $GITHUB_WORKSPACE/.config openwrt/.config
+
             - name: Move config & execute diy-part2.sh
               id: config
-              if: steps.feeds-update.outcome == 'success' && !cancelled()
+              if: github.event.inputs.RELOAD_CONFIG == 'true'
               run: |
                     cp -f openwrt/defconfig/mt7981-ax3000.config openwrt/.config
                     chmod +x $DIY_P2_SH
@@ -186,7 +197,7 @@ jobs:
 
             - name: config build dir override
               id: update_config_build
-              if: steps.feeds-update.outcome == 'success' && !cancelled()
+              if: github.event.inputs.RELOAD_CONFIG == 'true'
               run: |
                 cd openwrt
 
