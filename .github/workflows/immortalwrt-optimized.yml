@@ -181,7 +181,6 @@ jobs:
 
             - name: cp .config
               id: cp_config
-              if: steps.feeds.outcome == 'success' && !cancelled()
               run: |
                     cp -f $GITHUB_WORKSPACE/.config openwrt/.config
 
@@ -242,7 +241,6 @@ jobs:
                 sed -i 's/CONFIG_PACKAGE_lua-cjson=y/CONFIG_WIFI_NORMAL_SETTING=y/g' .config
 
             - name: cat config
-              if: steps.config.outcome == 'success' && !cancelled()
               run: |
                   cd openwrt
                   # 去重：保留每个配置项的最后一次定义（符合OpenWRT配置规则）
