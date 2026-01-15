@@ -282,9 +282,7 @@ jobs:
               if: steps.config.outcome == 'success' && !cancelled()
               run: |
                 cd openwrt
-                make defconfig V=s 
-
-                cat include/config/auto.conf | grep BUILD_DIR     
+                make defconfig V=s   
 
             - name: Download package
               id: package
