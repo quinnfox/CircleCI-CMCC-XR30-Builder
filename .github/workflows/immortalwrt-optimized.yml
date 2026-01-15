@@ -250,6 +250,9 @@ jobs:
                 CONFIG_PACKAGE_iptables=y
                 CONFIG_PACKAGE_ebtables=y
                 CONFIG_PACKAGE_kmod-br-netfilter=y  # 桥接网络过滤
+
+                CONFIG_PACKAGE_luci-app-dockerman=y
+                CONFIG_PACKAGE_luci-i18n-dockerman-zh-cn=y  # 可选，中文语言包
                 EOF
             
             - name: Use luci-app-mtk config
