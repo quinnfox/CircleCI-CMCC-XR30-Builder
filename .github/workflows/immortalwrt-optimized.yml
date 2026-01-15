@@ -221,40 +221,6 @@ jobs:
                     echo "未找到配置文件.config"
                 fi
 
-            - name: docker config
-              id: docker_config
-              if: steps.feeds-update.outcome == 'success' && !cancelled()
-              run: |
-                cd openwrt
-
-                # 定义要追加的配置内容（避免手动输入错误）
-                cat << 'EOF' >> .config
-                # 内核必需项（Docker依赖）
-                CONFIG_KERNEL_CGROUPS=y
-                CONFIG_KERNEL_CGROUP_MEM_RES_CTLR=y
-                CONFIG_KERNEL_CGROUP_PIDS=y
-                CONFIG_KERNEL_NAMESPACES=y
-                CONFIG_KERNEL_OVERLAY_FS=y       # 存储驱动overlay2需要
-                CONFIG_KERNEL_BRIDGE=y
-                CONFIG_KERNEL_VETH=y             # 虚拟网卡，Docker网络需要
-                
-                # Docker核心组件
-                CONFIG_PACKAGE_docker=y
-                CONFIG_PACKAGE_docker-ce=y       # 优先选docker-ce（若无则只保留docker）
-                CONFIG_PACKAGE_containerd=y
-                CONFIG_PACKAGE_runc=y
-                CONFIG_PACKAGE_docker-compose=y  # 可选，按需添加
-                
-                # 依赖工具
-                CONFIG_PACKAGE_bridge-utils=y
-                CONFIG_PACKAGE_iptables=y
-                CONFIG_PACKAGE_ebtables=y
-                CONFIG_PACKAGE_kmod-br-netfilter=y  # 桥接网络过滤
-
-                CONFIG_PACKAGE_luci-app-dockerman=y
-                CONFIG_PACKAGE_luci-i18n-dockerman-zh-cn=y  # 可选，中文语言包
-                EOF
-            
             - name: Use luci-app-mtk config
               if: github.event.inputs.APP_MTK == 'true'
               run: |
@@ -423,14 +389,14 @@ jobs:
                 echo ""
                 
                 # 4. 创建日志目录
-                mkdir -p $GITHUB_WORKSPACE/debug-logs
+                sudo mkdir -p $GITHUB_WORKSPACE/debug-logs
                 
                 # 5. 收集 m4 工具的 config.log（关键：排查 tools/m4 编译失败）
                 echo "📄 Collecting m4 config.log..."
                 if [ -d "/workdir/openwrt" ]; then
                   M4_CONFIG_LOG=$(find /workdir/openwrt/build_dir/host/m4-* -name config.log 2>/dev/null | head -1)
                   if [ -f "$M4_CONFIG_LOG" ]; then
-                    cp "$M4_CONFIG_LOG" $GITHUB_WORKSPACE/debug-logs/m4-config.log
+                    sudo cp "$M4_CONFIG_LOG" $GITHUB_WORKSPACE/debug-logs/m4-config.log
                     echo "✅ m4 config.log collected"
                   else
                     echo "⚠️ m4 config.log not found"
@@ -452,7 +418,7 @@ jobs:
                 # 7. 收集 .config 文件（排查配置错误）
                 echo "📄 Collecting .config file..."
                 if [ -f "/workdir/openwrt/.config" ]; then
-                  cp /workdir/openwrt/.config $GITHUB_WORKSPACE/debug-logs/.config
+                  sudo cp /workdir/openwrt/.config $GITHUB_WORKSPACE/debug-logs/.config
                 else
                   echo "⚠️ .config file not found (config step failed)"
                   echo ".config file not available" > $GITHUB_WORKSPACE/debug-logs/.config
@@ -468,7 +434,7 @@ jobs:
                 ls -la $GITHUB_WORKSPACE/debug-logs
                 echo ""
 
-                cat build-error.log    
+                cat /workdir/openwrt/build-error.log    
                           
                 echo "✅ Debug information collection completed"
 
