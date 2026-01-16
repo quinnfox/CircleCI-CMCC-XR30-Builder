@@ -700,7 +700,7 @@ function configure_docker_support() {
 
     # Docker核心组件
     config_package_add "docker"
-    config_package_add "docker-ce"              # 优先选docker-ce（若无则只保留docker）
+    #config_package_add "docker-ce"              # 优先选docker-ce（若无则只保留docker）
     config_package_add "containerd"
     config_package_add "runc"
     config_package_add "docker-compose"         # 可选，按需添加
