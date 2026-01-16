@@ -433,8 +433,8 @@ jobs:
                 
                 # 8. 收集磁盘空间和内存使用情况的日志
                 echo "📄 Saving system info to log..."
-                df -hT > $GITHUB_WORKSPACE/debug-logs/disk-space.log
-                free -h > $GITHUB_WORKSPACE/debug-logs/memory.log
+                sudo df -hT > $GITHUB_WORKSPACE/debug-logs/disk-space.log
+                sudo free -h > $GITHUB_WORKSPACE/debug-logs/memory.log
                 
                 # 9. 列出收集到的日志文件
                 echo "📋 Collected debug logs:"
