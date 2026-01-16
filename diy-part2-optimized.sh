@@ -679,6 +679,8 @@ function configure_custom_applications() {
     # AdGuard Home
     config_package_add "luci-app-adguardhome"
 
+    config_package_add "docker"
+    config_package_add "docker-compose"
     # 应用过滤和管理
     ##config_package_add luci-app-appfilter
     
@@ -746,7 +748,7 @@ configure_network_packages
 configure_system_packages
 configure_shell_packages
 configure_custom_applications
-configure_docker_support
+#configure_docker_support
 
 # ============================================
 # Apply All Optimizations
