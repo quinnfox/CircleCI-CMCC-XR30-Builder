@@ -5,7 +5,7 @@ on:
     workflow_dispatch:
         inputs:
             RELOAD_CONFIG:
-                description: '重新加载配置'
+                description: '重新生成配置文件.config'
                 required: true
                 default: false
                 type: boolean
@@ -55,9 +55,9 @@ on:
                 default: false
                 type: boolean
             CUSTOM_LAN_IP:
-                description: 'Custom LAN IP address (default: 192.168.3.1, replaces ImmortalWrt default 192.168.6.1)'
+                description: 'Custom LAN IP address (default: 192.168.6.1)'
                 required: false
-                default: '192.168.3.1'
+                default: '192.168.6.1'
                 type: string
 
 env:
@@ -70,7 +70,7 @@ env:
     # CONFIG_FILE: .config
     DIY_P1_SH: diy-part1.sh
     DIY_P2_SH: diy-part2-optimized.sh
-    
+
     # Optimization flags
     OPTIMIZATION_LEVEL: ${{ github.event.inputs.OPTIMIZATION_LEVEL || 'full' }}
     # Individual optimization settings (only used in custom mode)
@@ -80,7 +80,7 @@ env:
     KERNEL_CLANG_LTO: ${{ github.event.inputs.KERNEL_CLANG_LTO || 'true' }}
     USE_GCC14: ${{ github.event.inputs.USE_GCC14 || 'true' }}
     ENABLE_ADVANCED_FEATURES: ${{ github.event.inputs.ENABLE_ADVANCED_FEATURES || 'false' }}
-    CUSTOM_LAN_IP: ${{ github.event.inputs.CUSTOM_LAN_IP || '192.168.3.1' }}
+    CUSTOM_LAN_IP: ${{ github.event.inputs.CUSTOM_LAN_IP || '192.168.6.1' }}
 
 jobs:
     ImmortalWrt-Builder-Optimized:
@@ -89,7 +89,7 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@main
-            
+
             - name: Check space usage
               if: (!cancelled())
               run: df -hT
@@ -194,43 +194,6 @@ jobs:
                     $GITHUB_WORKSPACE/$DIY_P2_SH
                     echo "status=success" >> $GITHUB_OUTPUT
 
-            - name: config build dir override
-              id: update_config_build
-              if: github.event.inputs.RELOAD_CONFIG == 'true'
-              run: |
-                cd openwrt
-
-                sudo mkdir -p /mnt/openwrt_build
-                sudo chmod 775 /mnt/openwrt_build
-                # 4. 测试写入权限（关键）
-                sudo touch /mnt/openwrt_build/test.txt
-                if [ $? -eq 0 ]; then
-                  echo "路径权限正常"
-                  sudo rm /mnt/openwrt_build/test.txt
-                else
-                  echo "路径无写入权限，检查挂载/权限"
-                fi
-                
-                # 安全设置构建目录覆盖选项
-                if [ -f ".config" ]; then
-                    # 检查配置是否已存在（包括被注释的情况）
-                    if grep -q "^CONFIG_BUILD_DIR_OVERRIDE=" .config; then
-                        # 已启用的配置，直接更新
-                        sed -i 's/^CONFIG_BUILD_DIR_OVERRIDE=.*/CONFIG_BUILD_DIR_OVERRIDE="\/mnt\/openwrt_build"/' .config
-                        echo "已更新构建目录/mnt/openwrt_build覆盖选项"
-                    elif grep -q "# CONFIG_BUILD_DIR_OVERRIDE is not set" .config; then
-                        # 被注释的配置，取消注释并设置值
-                        sed -i 's/^# CONFIG_BUILD_DIR_OVERRIDE is not set$/CONFIG_BUILD_DIR_OVERRIDE="\/mnt\/openwrt_build"/' .config
-                        echo "已启用并更新构建目录/mnt/openwrt_build覆盖选项"
-                    else
-                        # 配置不存在，添加新配置
-                        echo 'CONFIG_BUILD_DIR_OVERRIDE="/mnt/openwrt_build"' >> .config
-                        echo "已添加构建目录/mnt/openwrt_build覆盖选项"
-                    fi
-                else
-                    echo "未找到配置文件.config"
-                fi
-
             - name: Use luci-app-mtk config
               if: github.event.inputs.APP_MTK == 'true'
               run: |
@@ -252,14 +215,31 @@ jobs:
                   echo "查看.config内容："
                   cat .config
 
+            - name: mkdir config build dir
+              id: update_config_build
+              if: steps.init.outcome == 'success' && !cancelled()
+              run: |
+                sudo mkdir -p /mnt/openwrt_build
+                sudo chmod 775 /mnt/openwrt_build
+                # 4. 测试写入权限（关键）
+                sudo touch /mnt/openwrt_build/test.txt
+                if [ $? -eq 0 ]; then
+                  echo "路径权限正常"
+                  sudo rm /mnt/openwrt_build/test.txt
+                else
+                  echo "路径无写入权限，检查挂载/权限"
+                fi
+
             - name: defconfig
               id: defconfig
+              if: steps.update_config_build.outcome == 'success' && !cancelled()
               run: |
                 cd openwrt
                 make defconfig V=s   
 
             - name: Download package
               id: package
+              if: steps.defconfig.outcome == 'success' && !cancelled()
               run: |
                 cd openwrt  
                 # Use optimized parallel download
@@ -279,9 +259,10 @@ jobs:
                 # 如果找不到完全匹配的 sha，回退使用最近的缓存
                 restore-keys: |
                   ${{ runner.os }}-openwrt-ccache-${{ env.REPO_BRANCH }}-
-      
+
             - name: Compile the firmware
               id: compile
+              if: steps.package.outcome == 'success' && !cancelled()
               run: |
                 cd openwrt
                 echo "DEBUG: HOST_CFLAGS is $HOST_CFLAGS"
@@ -339,6 +320,7 @@ jobs:
                   done
                 ) &
                 
+                export BUILD_DIR="/mnt/openwrt_build"
                 # Optimized build process
                 make -j${JOBS} 2> >(tee build-error.log) >/dev/null || make -j1 2> >(tee -a build-error.log) >/dev/null || make -j1 V=s 2> >(tee -a build-error.log) >/dev/null
                 
@@ -452,6 +434,7 @@ jobs:
               run: df -hT
 
             - name: Organize compiled firmware
+              id: organize
               if: steps.compile.outcome == 'success' && !cancelled()
               run: |
                 mapfile -t devices < <(grep '^CONFIG_TARGET_DEVICE.*=y' openwrt/.config | sed -r 's/.*DEVICE_(.*)=y/\1/')
@@ -484,7 +467,7 @@ jobs:
                 echo "status=success" >> $GITHUB_OUTPUT
 
             - name: Upload firmware to Artifacts
-              # if: steps.organize.outcome == 'success' && !cancelled()
+              if: steps.organize.outcome == 'success' && !cancelled()
               uses: actions/upload-artifact@main
               with:
                 name: ${{ env.COMPILE_DATE }}-${{ env.OPENWRT_NAME }}-${{ env.UPLOAD_TAG_NAME }}${{ env.WIFI_INTERFACE }}

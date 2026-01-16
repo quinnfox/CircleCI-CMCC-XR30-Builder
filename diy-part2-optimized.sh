@@ -681,8 +681,9 @@ function configure_custom_applications() {
 
     config_package_add "docker"
     config_package_add "docker-compose"
+
     # 应用过滤和管理
-    ##config_package_add luci-app-appfilter
+    config_package_add luci-app-appfilter
     
 
     echo "✅ Custom applications configured"
